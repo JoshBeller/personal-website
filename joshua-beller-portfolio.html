@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Joshua Beller — Systems &amp; Software</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0B1220;
+    --bg-soft:#0E1626;
+    --panel:#121B2E;
+    --panel-2:#152137;
+    --border:#223255;
+    --border-soft:#1B2740;
+    --text:#E8EDF6;
+    --muted:#8C97AE;
+    --muted-dim:#5D6883;
+    --amber:#F2A65A;
+    --cyan:#5EEAD4;
+    --red:#F0806D;
+    --display: 'Space Grotesk', sans-serif;
+    --body: 'Inter', sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+
+  html{ scroll-behavior:smooth; }
+
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior:auto; }
+    *{ animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; scroll-behavior:auto !important; }
+  }
+
+  body{
+    background:
+      radial-gradient(1200px 600px at 85% -10%, rgba(94,234,212,0.06), transparent 60%),
+      radial-gradient(900px 500px at -10% 20%, rgba(242,166,90,0.05), transparent 55%),
+      var(--bg);
+    color:var(--text);
+    font-family:var(--body);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  a{ color:inherit; }
+
+  ::selection{ background:rgba(94,234,212,0.25); color:#fff; }
+
+  :focus-visible{
+    outline:2px solid var(--cyan);
+    outline-offset:3px;
+    border-radius:2px;
+  }
+
+  .wrap{
+    max-width:1080px;
+    margin:0 auto;
+    padding:0 28px;
+  }
+
+  /* ---------- NAV ---------- */
+  header.nav{
+    position:sticky;
+    top:0;
+    z-index:50;
+    background:rgba(11,18,32,0.82);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border-soft);
+  }
+  .nav-inner{
+    max-width:1080px;
+    margin:0 auto;
+    padding:16px 28px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+  }
+  .nav-id{
+    font-family:var(--mono);
+    font-size:13px;
+    color:var(--cyan);
+    letter-spacing:0.02em;
+    white-space:nowrap;
+  }
+  .nav-id b{ color:var(--text); font-weight:600; }
+  .nav-links{
+    display:flex;
+    gap:22px;
+    font-family:var(--mono);
+    font-size:12.5px;
+    color:var(--muted);
+    flex-wrap:wrap;
+  }
+  .nav-links a{
+    text-decoration:none;
+    padding:4px 2px;
+    border-bottom:1px solid transparent;
+    transition:color .2s ease, border-color .2s ease;
+  }
+  .nav-links a:hover, .nav-links a.active{
+    color:var(--cyan);
+    border-color:var(--cyan);
+  }
+  .nav-status{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    font-family:var(--mono);
+    font-size:11.5px;
+    color:var(--muted-dim);
+    white-space:nowrap;
+  }
+  .dot-live{
+    width:7px; height:7px; border-radius:50%;
+    background:var(--cyan);
+    box-shadow:0 0 0 0 rgba(94,234,212,.6);
+    animation:pulse 2.4s infinite;
+  }
+  @keyframes pulse{
+    0%{ box-shadow:0 0 0 0 rgba(94,234,212,.45); }
+    70%{ box-shadow:0 0 0 7px rgba(94,234,212,0); }
+    100%{ box-shadow:0 0 0 0 rgba(94,234,212,0); }
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    padding:76px 0 44px;
+  }
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:12.5px;
+    color:var(--amber);
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:18px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:20px; height:1px;
+    background:var(--amber);
+    display:inline-block;
+  }
+  h1.title{
+    font-family:var(--display);
+    font-weight:700;
+    font-size:clamp(38px, 6vw, 62px);
+    line-height:1.04;
+    letter-spacing:-0.01em;
+    max-width:820px;
+  }
+  h1.title .accent{ color:var(--cyan); }
+  .subtitle{
+    margin-top:18px;
+    max-width:640px;
+    color:var(--muted);
+    font-size:17px;
+  }
+  .hero-contact{
+    margin-top:26px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px 22px;
+    font-family:var(--mono);
+    font-size:13px;
+    color:var(--muted);
+  }
+  .hero-contact a{ text-decoration:none; color:var(--muted); border-bottom:1px dashed var(--border); transition:color .2s, border-color .2s; }
+  .hero-contact a:hover{ color:var(--cyan); border-color:var(--cyan); }
+
+  /* dashboard */
+  .dash{
+    margin-top:48px;
+    border:1px solid var(--border);
+    border-radius:10px;
+    background:linear-gradient(180deg, var(--panel), var(--bg-soft));
+    overflow:hidden;
+  }
+  .dash-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:12px 18px;
+    border-bottom:1px solid var(--border-soft);
+    font-family:var(--mono);
+    font-size:11.5px;
+    color:var(--muted-dim);
+  }
+  .dash-head .lights{ display:flex; gap:6px; }
+  .dash-head .lights span{ width:8px; height:8px; border-radius:50%; background:var(--border); display:inline-block; }
+  .dash-grid{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+  }
+  .stat{
+    padding:22px 18px;
+    border-right:1px solid var(--border-soft);
+    border-top:1px solid var(--border-soft);
+  }
+  .dash-grid .stat:nth-child(4n){ border-right:none; }
+  .dash-grid .stat:nth-child(-n+4){ border-top:none; }
+  .stat .num{
+    font-family:var(--mono);
+    font-weight:700;
+    font-size:26px;
+    color:var(--cyan);
+  }
+  .stat .lbl{
+    margin-top:6px;
+    font-size:12.5px;
+    color:var(--muted);
+    line-height:1.4;
+  }
+  @media (max-width:720px){
+    .dash-grid{ grid-template-columns:repeat(2,1fr); }
+    .dash-grid .stat:nth-child(4n){ border-right:1px solid var(--border-soft); }
+    .dash-grid .stat:nth-child(2n){ border-right:none; }
+    .dash-grid .stat:nth-child(-n+2){ border-top:none; }
+    .dash-grid .stat:nth-child(n+3){ border-top:1px solid var(--border-soft); }
+  }
+
+  /* ---------- SECTIONS ---------- */
+  section{
+    padding:64px 0;
+    border-top:1px solid var(--border-soft);
+  }
+  .path-label{
+    font-family:var(--mono);
+    font-size:13px;
+    color:var(--muted-dim);
+    margin-bottom:8px;
+  }
+  .path-label .prompt{ color:var(--amber); }
+  .path-label .cmd{ color:var(--cyan); }
+  h2.h{
+    font-family:var(--display);
+    font-weight:600;
+    font-size:clamp(24px,3.4vw,32px);
+    letter-spacing:-0.01em;
+    margin-bottom:6px;
+  }
+  .section-intro{
+    color:var(--muted);
+    max-width:640px;
+    margin-bottom:36px;
+    font-size:15.5px;
+  }
+
+  .reveal{
+    opacity:0;
+    transform:translateY(14px);
+    transition:opacity .6s ease, transform .6s ease;
+  }
+  .reveal.in{
+    opacity:1;
+    transform:translateY(0);
+  }
+
+  /* ---------- ABOUT ---------- */
+  .about-grid{
+    display:grid;
+    grid-template-columns:1.3fr 1fr;
+    gap:40px;
+  }
+  .about-grid p{ color:var(--text); font-size:15.5px; margin-bottom:14px; }
+  .about-grid p.muted{ color:var(--muted); }
+  .coursework{
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:18px 20px;
+    background:var(--panel);
+  }
+  .coursework .k{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--muted-dim);
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    margin-bottom:12px;
+  }
+  .coursework ul{ list-style:none; }
+  .coursework li{
+    font-size:13.5px;
+    color:var(--text);
+    padding:6px 0;
+    border-top:1px dashed var(--border-soft);
+  }
+  .coursework li:first-child{ border-top:none; }
+  .coursework li span{ color:var(--muted); font-family:var(--mono); font-size:11.5px; }
+  @media (max-width:800px){ .about-grid{ grid-template-columns:1fr; } }
+
+  /* ---------- SKILLS ---------- */
+  .skill-cats{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:18px;
+  }
+  @media (max-width:800px){ .skill-cats{ grid-template-columns:1fr; } }
+  .skill-card{
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:20px;
+    background:var(--panel);
+  }
+  .skill-card h3{
+    font-family:var(--mono);
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:.06em;
+    color:var(--amber);
+    margin-bottom:14px;
+  }
+  .chips{ display:flex; flex-wrap:wrap; gap:8px; }
+  .chip{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--text);
+    background:var(--panel-2);
+    border:1px solid var(--border-soft);
+    border-radius:5px;
+    padding:5px 9px;
+  }
+
+  /* ---------- EXPERIENCE (timeline) ---------- */
+  .timeline{
+    position:relative;
+    padding-left:26px;
+  }
+  .timeline::before{
+    content:"";
+    position:absolute;
+    left:5px; top:6px; bottom:6px;
+    width:1px;
+    background:var(--border);
+  }
+  .tl-item{
+    position:relative;
+    padding-bottom:40px;
+  }
+  .tl-item:last-child{ padding-bottom:0; }
+  .tl-item::before{
+    content:"";
+    position:absolute;
+    left:-26px; top:5px;
+    width:11px; height:11px;
+    border-radius:50%;
+    background:var(--bg);
+    border:2px solid var(--cyan);
+  }
+  .tl-head{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:space-between;
+    gap:8px 20px;
+    align-items:baseline;
+  }
+  .tl-head h3{
+    font-family:var(--display);
+    font-weight:600;
+    font-size:19px;
+  }
+  .tl-role{
+    font-size:13.5px;
+    color:var(--amber);
+    margin-top:2px;
+  }
+  .tl-meta{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--muted-dim);
+    text-align:right;
+    white-space:nowrap;
+  }
+  .tl-item ul{
+    margin-top:12px;
+    list-style:none;
+  }
+  .tl-item li{
+    position:relative;
+    padding-left:18px;
+    color:var(--muted);
+    font-size:14.5px;
+    margin-bottom:7px;
+  }
+  .tl-item li::before{
+    content:"▸";
+    position:absolute; left:0; top:0;
+    color:var(--cyan);
+    font-size:12px;
+  }
+
+  /* ---------- PROJECTS ---------- */
+  .proj-grid{
+    display:grid;
+    grid-template-columns:repeat(2, 1fr);
+    gap:18px;
+  }
+  @media (max-width:800px){ .proj-grid{ grid-template-columns:1fr; } }
+  .proj-card{
+    border:1px solid var(--border);
+    border-radius:9px;
+    background:var(--panel);
+    padding:22px;
+    display:flex;
+    flex-direction:column;
+    transition:border-color .2s ease, transform .2s ease;
+  }
+  .proj-card:hover{
+    border-color:var(--cyan);
+    transform:translateY(-2px);
+  }
+  .proj-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:10px;
+    margin-bottom:10px;
+  }
+  .proj-card h3{
+    font-family:var(--display);
+    font-weight:600;
+    font-size:17px;
+    line-height:1.3;
+  }
+  .proj-date{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--muted-dim);
+    white-space:nowrap;
+    margin-top:3px;
+  }
+  .proj-card p{
+    color:var(--muted);
+    font-size:14px;
+    margin-bottom:12px;
+  }
+  .proj-stack{
+    margin-top:auto;
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    padding-top:10px;
+  }
+  .proj-stack span{
+    font-family:var(--mono);
+    font-size:10.5px;
+    color:var(--cyan);
+    background:rgba(94,234,212,0.08);
+    border:1px solid rgba(94,234,212,0.25);
+    border-radius:4px;
+    padding:3px 7px;
+  }
+
+  /* ---------- LEADERSHIP ---------- */
+  .lead-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:16px;
+  }
+  @media (max-width:800px){ .lead-grid{ grid-template-columns:1fr; } }
+  .lead-card{
+    border-left:2px solid var(--amber);
+    padding:4px 0 4px 18px;
+  }
+  .lead-card h3{
+    font-family:var(--display);
+    font-size:16px;
+    font-weight:600;
+  }
+  .lead-card .role{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--muted-dim);
+    margin:4px 0 8px;
+  }
+  .lead-card p{ color:var(--muted); font-size:14px; }
+
+  /* ---------- FOOTER / CONTACT ---------- */
+  footer{
+    padding:60px 0 50px;
+    border-top:1px solid var(--border-soft);
+  }
+  .footer-grid{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:30px;
+  }
+  footer h2{
+    font-family:var(--display);
+    font-weight:700;
+    font-size:clamp(26px,4vw,38px);
+    max-width:480px;
+    line-height:1.2;
+  }
+  footer h2 .accent{ color:var(--cyan); }
+  .footer-links{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    font-family:var(--mono);
+    font-size:14px;
+  }
+  .footer-links a{
+    text-decoration:none;
+    color:var(--text);
+    border-bottom:1px solid var(--border);
+    padding-bottom:2px;
+    width:fit-content;
+    transition:color .2s, border-color .2s;
+  }
+  .footer-links a:hover{ color:var(--cyan); border-color:var(--cyan); }
+  .fine{
+    margin-top:44px;
+    font-family:var(--mono);
+    font-size:11.5px;
+    color:var(--muted-dim);
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <div class="nav-id"><b>J. Beller</b> <span style="color:var(--muted-dim)">/</span> systems &amp; software</div>
+    <nav class="nav-links">
+      <a href="#about">about</a>
+      <a href="#skills">skills</a>
+      <a href="#experience">experience</a>
+      <a href="#projects">projects</a>
+      <a href="#leadership">leadership</a>
+      <a href="#education">education</a>
+      <a href="#contact">contact</a>
+    </nav>
+    <div class="nav-status"><span class="dot-live"></span> <span id="clock">ANN ARBOR, MI</span></div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <section class="hero" style="border-top:none;">
+    <div class="eyebrow">B.S. Computer Science — University of Michigan</div>
+    <h1 class="title">Joshua Beller builds the <span class="accent">systems</span> that keep other systems running.</h1>
+    <p class="subtitle">Computer science student splitting time between campus-scale IT operations, security lab work, and Python/C++ projects that turn messy operational data into something you can act on.</p>
+    <div class="hero-contact">
+      <span>Ann Arbor, MI</span>
+      <a href="mailto:jbeller@umich.edu">jbeller@umich.edu</a>
+      <a href="tel:+18103918464">(810) 391-8464</a>
+      <a href="https://www.linkedin.com/" target="_blank" rel="noopener">linkedin.com/in/joshuabeller</a>
+      <a href="https://github.com/" target="_blank" rel="noopener">github.com/joshuabeller</a>
+    </div>
+
+    <div class="dash reveal">
+      <div class="dash-head">
+        <span>root@umich-its:~$ uptime --support-stats</span>
+        <div class="lights"><span></span><span></span><span></span></div>
+      </div>
+      <div class="dash-grid">
+        <div class="stat"><div class="num">~100/wk</div><div class="lbl">service tickets triaged &amp; tracked at UM ITS</div></div>
+        <div class="stat"><div class="num">2,000+</div><div class="lbl">campus desktops supported across 90+ labs</div></div>
+        <div class="stat"><div class="num">3,000+</div><div class="lbl">students &amp; staff supported at Davison IT</div></div>
+        <div class="stat"><div class="num">3.6</div><div class="lbl">GPA, B.S. Computer Science</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="about">
+    <div class="path-label"><span class="prompt">~$</span> <span class="cmd">cat</span> about.md</div>
+    <h2 class="h">About</h2>
+    <div class="about-grid">
+      <div>
+        <p>I'm a Computer Science student at the University of Michigan, currently leading site-support operations for campus IT while building Python and C++ tools on the side — usually ones that start from a pile of operational data nobody's looked at closely yet.</p>
+        <p class="muted">My background runs through two K-12-to-college IT support roles, a security lab, a sports-analytics research group, and four years writing competition robotics software for FIRST Robotics Team 3534. The common thread: high-volume, real-world systems where things break in interesting ways, and someone has to figure out why.</p>
+        <p class="muted">I'm looking for internships in software engineering, data, or security operations — and I build for hackathons the same way I debug tickets: fast, methodically, and with an eye for the pattern behind the incident.</p>
+      </div>
+      <div class="coursework">
+        <div class="k">Relevant Coursework</div>
+        <ul>
+          <li>Data Structures &amp; Algorithms <span>EECS 281</span></li>
+          <li>Programming &amp; Data Structures <span>EECS 280</span></li>
+          <li>Computer Organization <span>EECS 370</span></li>
+          <li>Computer Security <span>EECS 388</span></li>
+          <li>Discrete Mathematics <span>EECS 203</span></li>
+          <li>Intro to Data Science <span>DATASCI 101</span></li>
+          <li>Computational Linear Algebra / Robotics <span>ROB 101</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="skills">
+    <div class="path-label"><span class="prompt">~$</span> <span class="cmd">ls</span> -la skills/</div>
+    <h2 class="h">Technical Skills</h2>
+    <div class="section-intro">Organized by how I actually use them — writing software, running data pipelines, or keeping systems and networks healthy.</div>
+    <div class="skill-cats">
+      <div class="skill-card">
+        <h3>Languages</h3>
+        <div class="chips">
+          <span class="chip">Python</span><span class="chip">C++</span><span class="chip">Java</span>
+          <span class="chip">JavaScript</span><span class="chip">SQL</span><span class="chip">C</span><span class="chip">Julia</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <h3>Software &amp; Data</h3>
+        <div class="chips">
+          <span class="chip">Git / GitHub</span><span class="chip">REST APIs</span><span class="chip">Flask</span>
+          <span class="chip">React.js</span><span class="chip">pandas</span><span class="chip">NumPy</span>
+          <span class="chip">BeautifulSoup</span><span class="chip">Jupyter</span><span class="chip">Docker</span><span class="chip">Google Cloud</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <h3>Security &amp; Networking</h3>
+        <div class="chips">
+          <span class="chip">Wireshark</span><span class="chip">Bash / Zsh</span><span class="chip">SSH</span>
+          <span class="chip">Packet Analysis</span><span class="chip">HTTP / TLS</span><span class="chip">Log Analysis</span>
+          <span class="chip">Alert Triage</span><span class="chip">TryHackMe</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <h3>Systems &amp; IT Support</h3>
+        <div class="chips">
+          <span class="chip">Windows</span><span class="chip">macOS</span><span class="chip">Linux / Unix</span>
+          <span class="chip">ChromeOS</span><span class="chip">Microsoft 365</span><span class="chip">Google Workspace</span>
+          <span class="chip">Ticketing Systems</span><span class="chip">Device Imaging</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <h3>Support Operations</h3>
+        <div class="chips">
+          <span class="chip">Ticket Triage</span><span class="chip">Escalation Workflows</span><span class="chip">Documentation</span>
+          <span class="chip">Inventory Logistics</span><span class="chip">Classroom AV</span><span class="chip">Hardware Replacement</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <h3>Currently Exploring</h3>
+        <div class="chips">
+          <span class="chip">Nmap</span><span class="chip">Metasploit</span><span class="chip">Snort</span><span class="chip">Hydra</span><span class="chip">steghide</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="experience">
+    <div class="path-label"><span class="prompt">~$</span> <span class="cmd">tail</span> -f experience.log</div>
+    <h2 class="h">Experience</h2>
+    <div class="timeline">
+
+      <div class="tl-item reveal">
+        <div class="tl-head">
+          <div>
+            <h3>University of Michigan Information &amp; Technology Services</h3>
+            <div class="tl-role">Student Manager / Sites Team Lead</div>
+          </div>
+          <div class="tl-meta">Aug 2024 – Present<br>Ann Arbor, MI</div>
+        </div>
+        <ul>
+          <li>Coordinate campus-wide support operations, triaging, prioritizing, and tracking approximately 100 service tickets per week across academic and administrative environments.</li>
+          <li>Directly resolve 30–40 weekly issues involving printers, workstations, peripherals, software, and authentication across Windows, macOS, and Linux systems.</li>
+          <li>Support a campus environment of 2,000+ desktops, ~160 printers, and 90+ computing labs and classrooms through mobile troubleshooting, equipment swaps, and follow-up testing.</li>
+          <li>Investigate recurring printer and workstation failures, document troubleshooting steps, verify remediation, and escalate complex issues to specialized teams.</li>
+          <li>Train and guide Rover staff, reinforce ticket documentation standards, and coordinate escalations during high-volume periods.</li>
+        </ul>
+      </div>
+
+      <div class="tl-item reveal">
+        <div class="tl-head">
+          <div>
+            <h3>Davison Community Schools Technology Department</h3>
+            <div class="tl-role">Level 1 IT Support Specialist</div>
+          </div>
+          <div class="tl-meta">June 2023 – Aug 2024<br>Davison, MI</div>
+        </div>
+        <ul>
+          <li>Provided Tier 1 technical support for 3,000+ students, teachers, and staff across a district environment of approximately 4,000 devices.</li>
+          <li>Diagnosed and resolved hardware, software, printer, Chromebook, and classroom AV issues across classrooms and administrative spaces.</li>
+          <li>Configured, imaged, repaired, and maintained Chromebooks and computers; provisioned equipment for students and staff.</li>
+          <li>Assisted with inventory, stolen-device disabling, equipment deployment, and summer refresh work across district buildings.</li>
+          <li>Improved response efficiency by identifying recurring problems and applying repeatable troubleshooting and deployment procedures.</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <section id="projects">
+    <div class="path-label"><span class="prompt">~$</span> <span class="cmd">git log</span> --projects --all</div>
+    <h2 class="h">Technical Projects</h2>
+    <div class="section-intro">A mix of data pipelines, systems programming, and security work — most start with a real dataset or a real system that needed fixing.</div>
+    <div class="proj-grid">
+
+      <div class="proj-card reveal">
+        <div class="proj-top"><h3>Printer Downtime Ticket Analytics</h3><span class="proj-date">2026</span></div>
+        <p>Built a Python workflow to collect, clean, and analyze printer-down service tickets, identifying devices with recurring failures. Investigated one high-failure campus printer with ~130 tickets over a year, turning ticket history into an actionable maintenance-prioritization process.</p>
+        <div class="proj-stack"><span>Python</span><span>Ticket Data</span><span>CSV/Excel</span><span>Ops Analysis</span></div>
+      </div>
+
+      <div class="proj-card reveal">
+        <div class="proj-top"><h3>Michigan Edge — Quantitative Sports Analytics</h3><span class="proj-date">Jan 2025 – Present</span></div>
+        <p>Designed Python data pipelines to collect, clean, and analyze sports and market datasets. Built modular simulation and analysis tools to evaluate team efficiency, player metrics, and betting-market behavior at scale.</p>
+        <div class="proj-stack"><span>Python</span><span>Data Pipelines</span><span>Simulation</span><span>Web Scraping</span></div>
+      </div>
+
+      <div class="proj-card reveal">
+        <div class="proj-top"><h3>Star Wars Character Data Pipeline &amp; Dashboard</h3><span class="proj-date">2025</span></div>
+        <p>Built a scraping and processing pipeline (BeautifulSoup/requests) to collect and standardize character records, with a rule-based parsing workflow and an extensible Character class. Shipped a Flask app visualizing appearances and species distributions.</p>
+        <div class="proj-stack"><span>Python</span><span>Flask</span><span>BeautifulSoup</span><span>JSON/CSV</span><span>Git</span></div>
+      </div>
+
+      <div class="proj-card reveal">
+        <div class="proj-top"><h3>EECS 388 Security &amp; Network Labs</h3><span class="proj-date">2026</span></div>
+        <p>Analyzed network traffic with Wireshark and Linux tooling across HTTP, TLS, SSH, and file-system security scenarios. Practiced log review, hash analysis, basic forensics, and technical incident documentation.</p>
+        <div class="proj-stack"><span>Wireshark</span><span>Linux</span><span>SSH</span><span>Python</span></div>
+      </div>
+
+      <div class="proj-card reveal">
+        <div class="proj-top"><h3>EECS 281 Data Structures &amp; Algorithms</h3><span class="proj-date">2025</span></div>
+        <p>Implemented a stock-market simulation and a log-management/search tool in C++. Built minimum-spanning-tree and traveling-salesperson solvers using Prim's algorithm and branch-and-bound optimization, profiled against large test cases.</p>
+        <div class="proj-stack"><span>C++</span><span>STL</span><span>Graph Algorithms</span><span>Hashing</span></div>
+      </div>
+
+      <div class="proj-card reveal">
+        <div class="proj-top"><h3>Black Hole Explorer</h3><span class="proj-date">2025</span></div>
+        <p>A multi-level Pygame experience teaching black-hole science across five levels plus a hidden bonus level, weaving in the history and work of Einstein, Schwarzschild, Hawking, Ghez, Thorne, and Penrose.</p>
+        <div class="proj-stack"><span>Python</span><span>Pygame</span><span>Game Logic</span></div>
+      </div>
+
+      <div class="proj-card reveal">
+        <div class="proj-top"><h3>Data Science Analysis Portfolio</h3><span class="proj-date">2025</span></div>
+        <p>Reproducible analyses across Spotify, U.S. housing, NHANES health, pulsar detection, WikiArt emotion, and Isle Royale wolf/moose datasets — cleaning, exploring, visualizing, and writing up findings in notebooks.</p>
+        <div class="proj-stack"><span>Python</span><span>pandas</span><span>Jupyter</span><span>Statistics</span></div>
+      </div>
+
+      <div class="proj-card reveal">
+        <div class="proj-top"><h3>FRC Robot Control &amp; Vision System</h3><span class="proj-date">2020 – 2024</span></div>
+        <p>Competition-ready software for autonomous routines, drivetrain control, mechanism coordination, and vision-assisted targeting — integrated with sensors and motors, debugged live under competition time pressure.</p>
+        <div class="proj-stack"><span>Java</span><span>Computer Vision</span><span>Robotics</span></div>
+      </div>
+
+    </div>
+  </section>
+
+  <section id="leadership">
+    <div class="path-label"><span class="prompt">~$</span> <span class="cmd">who</span> --groups</div>
+    <h2 class="h">Leadership &amp; Activities</h2>
+    <div class="lead-grid">
+
+      <div class="lead-card reveal">
+        <h3>FIRST Robotics Team 3534 — House of Cards</h3>
+        <div class="role">Lead Programmer / Software &amp; Vision Systems Engineer — Sept 2020–May 2024</div>
+        <p>Led Java-based software for autonomous navigation, drivetrain behavior, and subsystem coordination; mentored newer programmers in code structure, version control, and competition debugging. Team advanced to a world-level finalist result.</p>
+      </div>
+
+      <div class="lead-card reveal">
+        <h3>ReliaQuest Cybersecurity Labs</h3>
+        <div class="role">Participant — Spring 2026</div>
+        <p>Completed hands-on lab projects in investigation workflows and AI-assisted alert triage, practicing security-operations communication and escalation with a team.</p>
+      </div>
+
+      <div class="lead-card reveal">
+        <h3>WolvSec — UM Cybersecurity Club</h3>
+        <div class="role">Member / Workshop Participant</div>
+        <p>Participate in workshops covering Linux, ethical hacking, threat analysis, and networking — building practical security skills alongside coursework.</p>
+      </div>
+
+      <div class="lead-card reveal">
+        <h3>Michigan Student AI Laboratory (MSAIL)</h3>
+        <div class="role">Member / Project Contributor</div>
+        <p>Contributed to a machine-learning project developing and testing a perceptron model, strengthening foundational understanding of training, evaluation, and iterative debugging.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <section id="education">
+    <div class="path-label"><span class="prompt">~$</span> <span class="cmd">cat</span> education.md</div>
+    <h2 class="h">Education</h2>
+    <div class="tl-item" style="padding-left:0;">
+      <div class="tl-head">
+        <div>
+          <h3 style="font-family:var(--display); font-weight:600; font-size:19px;">University of Michigan — Ann Arbor</h3>
+          <div class="tl-role">B.S. in Computer Science · GPA 3.6/4.0</div>
+        </div>
+        <div class="tl-meta">Ann Arbor, MI</div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer id="contact">
+  <div class="wrap">
+    <div class="footer-grid">
+      <h2>Let's talk about an internship, a hackathon team, or a system worth fixing. <span class="accent">→</span></h2>
+      <div class="footer-links">
+        <a href="mailto:jbeller@umich.edu">jbeller@umich.edu</a>
+        <a href="tel:+18103918464">(810) 391-8464</a>
+        <a href="https://www.linkedin.com/" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://github.com/" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+    <div class="fine">
+      <span>Joshua Beller — Ann Arbor, MI</span>
+      <span id="year"></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // active nav highlighting + scroll reveal
+  const links = document.querySelectorAll('.nav-links a');
+  const sections = Array.from(links).map(l => document.querySelector(l.getAttribute('href')));
+
+  function onScroll(){
+    let idx = 0;
+    const y = window.scrollY + 140;
+    sections.forEach((s, i) => { if(s && s.offsetTop <= y) idx = i; });
+    links.forEach((l,i) => l.classList.toggle('active', i === idx));
+  }
+  window.addEventListener('scroll', onScroll, { passive:true });
+  onScroll();
+
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold:0.15 });
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+  document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+
+</body>
+</html>
